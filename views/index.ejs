@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Smart Attendence System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: rgb(203, 203, 203);
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            border: 2px solid black;
+            text-align: center;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+
+        #btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .mainAttendenceModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mainAttendenceModal table {
+            width: 90%;
+            margin: auto;
+            background-color: white;
+        }
+
+        .mainAttendenceModal th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .mainAttendenceModal td {
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="label">Smart Attendence System</h1>
+    <div class="mainAttendenceModal">
+        <table id="studentRecords">
+            <tr>
+                <th>Roll No.</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Department</th>
+                <th>Subject Code</th>
+                <th>Entry at</th>
+            </tr>
+            <!-- <tr>
+                <td>S-417</td>
+                <td>Ayush</td>
+                <td>Singh</td>
+                <td>Computer Science</td>
+                <td>CMSA</td>
+                <td>12:09:23</td>
+            </tr> -->
+        </table>
+        <button id="btn" class="btn1" onclick="stopAttendence()" style="background-color: #b33030 !important;">Stop
+            Attendance</button>
+    </div>
+    <button id="btn" class="btn2" onclick="startAttendence()">Start Attendance</button>
+    <script>
+        let mainAttendenceModal = document.querySelector('.mainAttendenceModal');
+        var fetchInterval;
+        let table = document.getElementById('studentRecords');
+        const startAttendence = () => {
+            mainAttendenceModal.style.display = "flex";
+
+            // start Attendence
+            // getAttendance();
+            fetch('http://localhost:3000/startattendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify(data)
+            })
+                .then(response => response.text())
+                .then(data => {
+                    getAttendance();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        const stopAttendence = () => {
+            document.querySelector('.label').style = "display : none";
+            mainAttendenceModal.style = "position: relative;"
+            mainAttendenceModal.style = "display: flex;"
+            document.querySelector('.btn1').style = "display : none";
+            document.querySelector('.btn2').style = "display : none";
+            clearInterval(fetchInterval);
+        }
+
+        const getAttendance = () => {
+            var prevlength = 0;
+            fetchInterval = setInterval(() => {
+                fetch('http://localhost:3000/addattendance', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // 
+                        if (data.length > 0) {
+                            if (prevlength === 0 || data[0].Record.length > prevlength) {
+                                deleteRowOfTable();
+                                console.log(data[0].Record)
+                                insertDataToTable(data[0].Record);
+                                prevlength = data[0].Record.length;
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }, 100)
+
+        }
+
+        const insertDataToTable = (data) => {
+            data.forEach(element => {
+                let newRow = table.insertRow();
+                let cell1 = newRow.insertCell(0);
+                let cell2 = newRow.insertCell(1);
+                let cell3 = newRow.insertCell(2);
+                let cell4 = newRow.insertCell(3);
+                let cell5 = newRow.insertCell(4);
+                let cell6 = newRow.insertCell(5);
+                cell1.innerHTML = element.roll;
+                cell2.innerHTML = element.fname;
+                cell3.innerHTML = element.lname;
+                cell4.innerHTML = element.department;
+                cell5.innerHTML = element.scode;
+                cell6.innerHTML = element.time;
+            });
+        }
+
+        const deleteRowOfTable = () => {
+            let rowCount = table.rows.length;
+            for (let i = rowCount - 1; i >= 1; i--) {
+                table.deleteRow(i);
+            }
+        }
+
+    </script>
+</body>
+
+</html>
+
+<!--  {
+        "Date": "2023-04-29",
+        "Record": [
+            {
+                "roll": "S-417",
+                "fname": "Ayush",
+                "lname": "Singh",
+                "department": "Computer Science",
+                "scode": "CMSA",
+                "time": "20:58:31"
+            },
+            {
+                "roll": "S-431",
+                "fname": "Sinchan",
+                "lname": "Nandy",
+                "department": "Computer Science",
+                "scode": "CMSA",
+                "time": "20:59:40"
+            }
+        ]
+    } -->

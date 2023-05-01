@@ -1,0 +1,26 @@
+[
+    {
+        "roll": "S-417",
+        "fname": "Ayush",
+        "lname": "Singh",
+        "department": "Computer Science",
+        "scode": "CMSA",
+        "card": "b38a6633"
+    },
+    {
+        "roll": "S-431",
+        "fname": "Sinchan",
+        "lname": "Nandy",
+        "department": "Computer Science",
+        "scode": "CMSA",
+        "card": "73d492a7"
+    },
+    {
+        "roll": "S-401",
+        "fname": "Ahana",
+        "lname": "Baccha",
+        "department": "Computer Science",
+        "scode": "CMSA",
+        "card": "b38ca433"
+    }
+]
