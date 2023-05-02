@@ -22,6 +22,8 @@ MFRC522::MIFARE_Key key;
 byte nuidPICC[4];
 void setup() {
   pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);
   Serial.begin(9600);
   SPI.begin();  // Init SPI bus
   WiFi.begin(ssid, password);
@@ -116,16 +118,38 @@ void sendToNodeJS(String uid) {
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     String httpRequestData = "&rfid="+ uid +"&status=approved";
     int httpCode = http.POST(httpRequestData);
-    if(httpCode == 404) {
+    Serial.println(http.getString());
+
+    if(http.getString() == "denied") {
       digitalWrite(D1, HIGH);
       delay(1000);
       digitalWrite(D1, LOW);
       delay(1000);
+      digitalWrite(D1, HIGH);
+      delay(1000);
+      digitalWrite(D1, LOW);
+      delay(1000);
+    } else if(http.getString() == "granted") {
+      digitalWrite(D3, HIGH);
+      delay(1000);
+      digitalWrite(D3, LOW);
+      delay(1000);
+      digitalWrite(D3, HIGH);
+      delay(1000);
+      digitalWrite(D3, LOW);
+      delay(1000);
+    } else {
+      digitalWrite(D2, HIGH);
+      delay(1000);
+      digitalWrite(D2, LOW);
+      delay(1000);
+      digitalWrite(D2, HIGH);
+      delay(1000);
+      digitalWrite(D2, LOW);
+      delay(1000);
     }
     Serial.print("HTTP Response code: ");
     Serial.println(httpCode);
-    Serial.println(http.getString());
-
     // Free resources
     http.end();
   } else {

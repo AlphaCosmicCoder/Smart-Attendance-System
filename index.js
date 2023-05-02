@@ -161,7 +161,7 @@ app.post('/startattendance', (req, res) => {
     const attendance = JSON.parse(fs.readFileSync('attendance.json'));
     const currentAttendanceRecord = attendance.find(record => record.Date === currentDate);
     if (currentAttendanceRecord) {
-        res.status(409).send('Attendance for today has already been started');
+        res.send('Attendance for today has already been started');
     } else {
         const newAttendanceRecord = {
             "Date": currentDate,
@@ -177,7 +177,7 @@ app.post('/addattendance', (req, res) => {
     const students = JSON.parse(fs.readFileSync('students.json'));
     const student = students.filter(student => student.card === req.body.rfid)
     if (Object.keys(student).length === 0) {
-        res.status(404).send("No Student Record Found");
+        res.send("denied");
     } else {
         console.log(student)
         const attendancerecord = {
@@ -197,11 +197,11 @@ app.post('/addattendance', (req, res) => {
         // res.send("attendence recorder");
         const studentRecordExists = recordtoday[0].Record.some(record => record.roll === student[0].roll);
         if (studentRecordExists) {
-            res.status(409).send(`${student[0].fname} ${student[0].lname} has already been marked present for today`);
+            res.send(`${student[0].fname} ${student[0].lname} has already been marked present for today`);
         } else {
             recordtoday[0].Record.push(attendancerecord);
             fs.writeFileSync('attendance.json', JSON.stringify(attendance));
-            res.status(200).send(`${student[0].fname} ${student[0].lname} marked present`);
+            res.send("granted");
         }
     }
 })
