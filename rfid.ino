@@ -9,10 +9,10 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-const char* ssid = "Ayush";
-const char* password = "ayush099";
+const char* ssid = "Ayush"; // wifi name
+const char* password = "ayush099"; // wifi password
 WiFiClient wifiClient;
-String serverName = "http://192.168.59.134:3000/addattendance";
+String serverName = "http://192.168.221.134:3000/addattendance"; // put ip address
 
 #define SS_PIN D4
 #define RST_PIN D0
@@ -21,9 +21,10 @@ MFRC522::MIFARE_Key key;
 // Init array that will store new NUID
 byte nuidPICC[4];
 void setup() {
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
+  pinMode(D1, OUTPUT); // already present
+  pinMode(D2, OUTPUT); // denied
+  pinMode(D3, OUTPUT); // granted
+  pinMode(D8, OUTPUT); // Buzzer
   Serial.begin(9600);
   SPI.begin();  // Init SPI bus
   WiFi.begin(ssid, password);
@@ -121,32 +122,54 @@ void sendToNodeJS(String uid) {
     Serial.println(http.getString());
 
     if(http.getString() == "denied") {
-      digitalWrite(D1, HIGH);
-      delay(1000);
-      digitalWrite(D1, LOW);
-      delay(1000);
-      digitalWrite(D1, HIGH);
-      delay(1000);
-      digitalWrite(D1, LOW);
-      delay(1000);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D2, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D2, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D2, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D2, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
     } else if(http.getString() == "granted") {
       digitalWrite(D3, HIGH);
+      digitalWrite(D8, HIGH);
       delay(1000);
       digitalWrite(D3, LOW);
+      digitalWrite(D8, LOW);
       delay(1000);
-      digitalWrite(D3, HIGH);
-      delay(1000);
-      digitalWrite(D3, LOW);
-      delay(1000);
+      // digitalWrite(D3, HIGH);
+      // delay(300);
+      // digitalWrite(D3, LOW);
+      // delay(1000);
     } else {
-      digitalWrite(D2, HIGH);
-      delay(1000);
-      digitalWrite(D2, LOW);
-      delay(1000);
-      digitalWrite(D2, HIGH);
-      delay(1000);
-      digitalWrite(D2, LOW);
-      delay(1000);
+      digitalWrite(D1, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D1, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
+      digitalWrite(D1, HIGH);
+      digitalWrite(D8, HIGH);
+      delay(300);
+      digitalWrite(D1, LOW);
+      digitalWrite(D8, LOW);
+      delay(300);
     }
     Serial.print("HTTP Response code: ");
     Serial.println(httpCode);

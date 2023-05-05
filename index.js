@@ -213,5 +213,5 @@ app.get('/addattendance', (req, res) => {
 })
 
 app.listen(3000, () => {
-    console.log(`http://192.168.59.134:3000`);
+    console.log(`http://192.168.221.134:3000`);
 })
